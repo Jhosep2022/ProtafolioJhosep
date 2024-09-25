@@ -6,6 +6,9 @@ import router from "./router";
 import Toast from "vue-toastification";
 import "vue-toastification/dist/index.css";
 
+// Importar configuración de Firebase
+import './firebaseConfig'; 
+
 const app = createApp(App);
 
 app.use(createPinia());
