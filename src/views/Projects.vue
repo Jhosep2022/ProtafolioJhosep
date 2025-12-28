@@ -1,42 +1,56 @@
 <template>
-  <div class="projects">
-    <div class="projects__header">
-      <h2>Projects</h2>
-      <button type="submit" class="contact__submit">Ver más</button>
+  <section class="projects">
+    <div class="page-wrapper projects__wrapper">
+      <div class="projects__header">
+        <div class="projects__heading">
+          <span class="projects__eyebrow">Selección reciente</span>
+          <h2>
+            Casos de estudio y productos donde mezclé diseño, código y estrategia
+          </h2>
+        </div>
+        <a href="#contact" class="projects__cta">Solicitar demo</a>
+      </div>
+
+      <div class="projects__grid">
+        <ProjectCard
+          title="Design Portfolio"
+          summary="Sistema modular para mostrar estudios de diseño con componentes reusables y modo oscuro."
+          stack="HTML · CSS"
+          :image="designPortfolioImg"
+        />
+        <ProjectCard
+          title="E-learning Landing Page"
+          summary="Landing page educativa con métricas en tiempo real y formularios conversacionales."
+          stack="HTML · CSS · JS"
+          :image="elearningLandingPageImg"
+        />
+        <ProjectCard
+          title="Todo Web App"
+          summary="Gestor de tareas con sincronización offline, filtros avanzados y analytics ligeros."
+          stack="HTML · CSS · JavaScript"
+          :image="todoWebAppImg"
+        />
+        <ProjectCard
+          title="Entertainment Web App"
+          summary="Catálogo multimedia con temas dinámicos, accesibilidad mejorada y recomendaciones personalizadas."
+          stack="HTML · CSS · JavaScript"
+          :image="entertainmentWebAppImg"
+        />
+        <ProjectCard
+          title="Memory Game"
+          summary="Juego web optimizado para mobile con animaciones suaves y niveles configurables."
+          stack="HTML · CSS · JavaScript"
+          :image="memoryGameImg"
+        />
+        <ProjectCard
+          title="Art Gallery Showcase"
+          summary="Galería interactiva con layout masonry, carga progresiva y administración de piezas."
+          stack="HTML · CSS · JavaScript"
+          :image="artGalleryShowcaseImg"
+        />
+      </div>
     </div>
-    <div class="projects__grid">
-      <ProjectCard
-        title="Design Portfolio"
-        description="HTML, CSS"
-        :image="designPortfolioImg"
-      />
-      <ProjectCard
-        title="E-learning Landing Page"
-        description="HTML, CSS, JS"
-        :image="elearningLandingPageImg"
-      />
-      <ProjectCard
-        title="Todo Web App"
-        description="HTML, CSS, JavaScript"
-        :image="todoWebAppImg"
-      />
-      <ProjectCard
-        title="Entertainment Web App"
-        description="HTML, CSS, JavaScript"
-        :image="entertainmentWebAppImg"
-      />
-      <ProjectCard
-        title="Memory Game"
-        description="HTML, CSS, JavaScript"
-        :image="memoryGameImg"
-      />
-      <ProjectCard
-        title="Art Gallery Showcase"
-        description="HTML, CSS, JavaScript"
-        :image="artGalleryShowcaseImg"
-      />
-    </div>
-  </div>
+  </section>
 </template>
 
 <script setup>
@@ -53,109 +67,87 @@ import artGalleryShowcaseImg from "@/assets/image.png";
 @import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&display=swap");
 
 .projects {
-  padding: 50px 100px;
-  color: white;
-  width: 100%;
-  box-sizing: border-box;
-  font-family: "Space Grotesk", sans-serif;
+  padding: 20px 0 0;
+}
+
+.projects__wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
 }
 
 .projects__header {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: space-between;
-  margin-bottom: 40px;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+
+.projects__heading {
+  max-width: 640px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.projects__eyebrow {
+  font-size: 13px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: rgba(245, 245, 255, 0.48);
+}
+
+.projects__heading h2 {
+  font-size: clamp(34px, 4vw, 48px);
+  line-height: 1.25;
+}
+
+.projects__cta {
+  align-self: flex-start;
+  padding: 12px 22px;
+  border-radius: 14px;
+  border: 1px solid rgba(127, 90, 240, 0.5);
+  color: var(--color-primary);
+  text-transform: uppercase;
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  transition:
+    transform 0.3s ease,
+    background 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.projects__cta:hover {
+  transform: translateY(-4px);
+  background: rgba(127, 90, 240, 0.1);
+  box-shadow: 0 15px 35px rgba(127, 90, 240, 0.22);
 }
 
 .projects__grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-  width: 100%;
-  box-sizing: border-box;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 28px;
 }
 
-.projects h2 {
-  font-size: 56px;
-  margin: 0;
-}
-
-.contact__submit {
-  padding: 10px 20px;
-  border: none;
-  background-color: transparent;
-  color: white;
-  font-family: "Space Grotesk", sans-serif;
-  font-size: 16px;
-  letter-spacing: 1px;
-  position: relative;
-  cursor: pointer;
-  text-transform: uppercase;
-  outline: none;
-}
-
-.contact__submit::after {
-  content: "";
-  position: absolute;
-  width: 100%;
-  height: 2px;
-  background-color: #7f5af0;
-  left: 0;
-  bottom: -5px;
-  transition: all 0.3s ease-in-out;
-}
-
-.contact__submit:hover::after {
-  width: 100%;
-}
-
-.contact__submit:hover {
-  color: #7f5af0;
-}
-
-.contact__submit:active {
-  transform: scale(0.98);
-}
-
-/* ===================== Responsive Styles ===================== */
-
-/* Para tabletas (pantallas medianas) */
-@media (max-width: 1024px) {
-  .projects {
-    padding: 40px 50px;
-  }
-
-  .projects h2 {
-    font-size: 48px;
-  }
-
+@media (max-width: 1100px) {
   .projects__grid {
-    grid-template-columns: repeat(2, 1fr); /* 2 columnas en tabletas */
-    gap: 20px;
-  }
-
-  .contact__submit {
-    font-size: 14px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
-/* Para móviles (pantallas pequeñas) */
-@media (max-width: 600px) {
-  .projects {
-    padding: 20px 20px;
-  }
-
-  .projects h2 {
-    font-size: 36px;
-  }
-
+@media (max-width: 720px) {
   .projects__grid {
-    grid-template-columns: 1fr; /* 1 columna en móviles */
-    gap: 20px;
+    grid-template-columns: 1fr;
   }
 
-  .contact__submit {
-    font-size: 12px;
+  .projects__header {
+    align-items: flex-start;
+  }
+
+  .projects__cta {
+    align-self: stretch;
+    text-align: center;
   }
 }
 </style>
