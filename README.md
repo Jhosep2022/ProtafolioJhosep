@@ -1,41 +1,17 @@
-# portafolio-proyecto
+<div align="center">
 
-This template should help get you started developing with Vue 3 in Vite.
+<a href="https://portafolio-62c22.web.app/">
+  <img src="docs/preview.jpg" alt="Vista previa del portafolio de Jose Condori" width="720" />
+</a>
 
-## Recommended IDE Setup
+# Jose Condori
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+Ingeniero de Sistemas · Full Stack & Mobile
 
-## Customize configuration
+### [Ver portafolio →](https://portafolio-62c22.web.app/)
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+[LinkedIn](https://www.linkedin.com/in/jose-amadeo-condori-ramos-890bb3257/) · [Correo](mailto:amadeo74080986@gmail.com)
 
-## Project Setup
+<sub>Hecho con Vue 3, GSAP y Lenis · Desplegado en Firebase Hosting</sub>
 
-```sh
-npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
-npm run dev
-```
-
-### Compile and Minify for Production
-
-```sh
-npm run build
-```
-
-### Run Unit Tests with [Vitest](https://vitest.dev/)
-
-```sh
-npm run test:unit
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
-```
+</div>
