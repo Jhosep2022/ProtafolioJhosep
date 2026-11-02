@@ -1,12 +1,19 @@
 /* main.css */
 :root {
-  --color-background: #060312;
-  --color-surface: rgba(20, 16, 41, 0.7);
-  --color-primary: #7f5af0;
-  --color-accent: #2cb67d;
-  --color-text: #f5f5ff;
-  --color-text-muted: rgba(245, 245, 255, 0.68);
-  --max-content-width: 1140px;
+  --color-background: #0a0a0b;
+  --color-surface: #131315;
+  --color-line: rgba(237, 237, 239, 0.12);
+  --color-primary: #c6f135;
+  --color-on-primary: #0a0a0b;
+  --color-text: #ededef;
+  --color-text-muted: #9a9aa1;
+  --font-sans: "Geist", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, "Cascadia Code", monospace;
+  --max-content-width: 1320px;
+  --gutter: clamp(16px, 4vw, 48px);
+  --page-edge: max(var(--gutter), calc((100vw - var(--max-content-width)) / 2 + var(--gutter)));
+  --header-height: 64px;
+  --section-gap: clamp(96px, 14vw, 180px);
 }
 
 *,
@@ -17,54 +24,27 @@
   box-sizing: border-box;
 }
 
-html,
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-stopped {
+  overflow: clip;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
 body {
   width: 100%;
-  height: 100%;
-  overflow-x: hidden;
-  scroll-behavior: smooth;
-  font-family: "Space Grotesk", system-ui, -apple-system, BlinkMacSystemFont,
-    "Segoe UI", sans-serif;
-  background: radial-gradient(120% 120% at 10% -10%, #1c0d3d 0%, #07031b 55%, #02010b 100%);
-  color: var(--color-text);
-}
-
-body {
-  position: relative;
   min-height: 100vh;
-}
-
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  background:
-    radial-gradient(42% 60% at 0% 0%, rgba(127, 90, 240, 0.22), transparent 65%),
-    radial-gradient(58% 55% at 100% 5%, rgba(44, 182, 125, 0.18), transparent 60%),
-    radial-gradient(32% 48% at 32% 88%, rgba(255, 121, 198, 0.12), transparent 68%);
-  z-index: -1;
-  mix-blend-mode: screen;
-  opacity: 0.85;
-  animation: gradientShift 18s ease-in-out infinite alternate;
-}
-
-body::after {
-  content: "";
-  position: fixed;
-  inset: -60% -40%;
-  pointer-events: none;
-  background: conic-gradient(
-      from 120deg at 50% 50%,
-      rgba(127, 90, 240, 0),
-      rgba(127, 90, 240, 0.12) 25%,
-      rgba(44, 182, 125, 0) 55%,
-      rgba(255, 121, 198, 0.08) 75%,
-      rgba(127, 90, 240, 0)
-    );
-  filter: blur(120px);
-  opacity: 0.5;
-  z-index: -2;
+  overflow-x: clip;
+  font-family: var(--font-sans);
+  background: var(--color-background);
+  color: var(--color-text);
+  -webkit-font-smoothing: antialiased;
 }
 
 a {
@@ -72,28 +52,95 @@ a {
   text-decoration: none;
 }
 
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+}
+
 img {
   display: block;
   max-width: 100%;
 }
 
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
+}
+
+::selection {
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+}
+
 .page-wrapper {
   width: min(100%, var(--max-content-width));
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 0 var(--gutter);
 }
 
-@keyframes gradientShift {
-  0% {
-    transform: translate3d(0, 0, 0);
-    opacity: 0.7;
-  }
-  50% {
-    transform: translate3d(-3%, 2%, 0);
-    opacity: 0.9;
-  }
-  100% {
-    transform: translate3d(2%, -3%, 0);
-    opacity: 0.75;
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+.section-label b {
+  font-weight: 400;
+  color: var(--color-primary);
+}
+
+.section-title {
+  font-size: clamp(34px, 5vw, 68px);
+  font-weight: 500;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 0 22px;
+  border: 1px solid var(--color-line);
+  border-radius: 999px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background 0.25s ease,
+    color 0.25s ease,
+    border-color 0.25s ease;
+}
+
+.button:hover {
+  border-color: var(--color-text);
+}
+
+.button--primary {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-on-primary);
+}
+
+.button--primary:hover {
+  background: var(--color-text);
+  border-color: var(--color-text);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }

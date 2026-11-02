@@ -1,153 +1,193 @@
 <template>
-  <section class="projects">
-    <div class="page-wrapper projects__wrapper">
-      <div class="projects__header">
-        <div class="projects__heading">
-          <span class="projects__eyebrow">Selección reciente</span>
-          <h2>
-            Casos de estudio y productos donde mezclé diseño, código y estrategia
-          </h2>
-        </div>
-        <a href="#contact" class="projects__cta">Solicitar demo</a>
+  <section id="projects" ref="root" class="projects">
+    <div class="page-wrapper projects__header">
+      <div class="projects__heading">
+        <p class="section-label"><b>01</b> Proyectos</p>
+        <h2 class="section-title" data-split>Trabajo seleccionado</h2>
       </div>
+      <p class="projects__counter" aria-hidden="true">
+        <b>{{ currentNumber }}</b> / {{ totalNumber }}
+      </p>
+    </div>
 
-      <div class="projects__grid">
-        <ProjectCard
-          title="Design Portfolio"
-          summary="Sistema modular para mostrar estudios de diseño con componentes reusables y modo oscuro."
-          stack="HTML · CSS"
-          :image="designPortfolioImg"
-        />
-        <ProjectCard
-          title="E-learning Landing Page"
-          summary="Landing page educativa con métricas en tiempo real y formularios conversacionales."
-          stack="HTML · CSS · JS"
-          :image="elearningLandingPageImg"
-        />
-        <ProjectCard
-          title="Todo Web App"
-          summary="Gestor de tareas con sincronización offline, filtros avanzados y analytics ligeros."
-          stack="HTML · CSS · JavaScript"
-          :image="todoWebAppImg"
-        />
-        <ProjectCard
-          title="Entertainment Web App"
-          summary="Catálogo multimedia con temas dinámicos, accesibilidad mejorada y recomendaciones personalizadas."
-          stack="HTML · CSS · JavaScript"
-          :image="entertainmentWebAppImg"
-        />
-        <ProjectCard
-          title="Memory Game"
-          summary="Juego web optimizado para mobile con animaciones suaves y niveles configurables."
-          stack="HTML · CSS · JavaScript"
-          :image="memoryGameImg"
-        />
-        <ProjectCard
-          title="Art Gallery Showcase"
-          summary="Galería interactiva con layout masonry, carga progresiva y administración de piezas."
-          stack="HTML · CSS · JavaScript"
-          :image="artGalleryShowcaseImg"
-        />
+    <div class="projects__viewport">
+      <div ref="track" class="projects__track">
+        <div v-for="(project, index) in projects" :key="project.title" class="projects__item">
+          <ProjectCard
+            :index="index"
+            :title="project.title"
+            :summary="project.summary"
+            :stack="project.stack"
+            :images="project.images"
+            :fit="project.fit"
+            :tone="project.tone"
+            :preview-url="project.previewUrl"
+          />
+        </div>
       </div>
     </div>
+
+    <span class="projects__bar" aria-hidden="true">
+      <span class="projects__bar-fill" :style="{ transform: `scaleX(${barProgress})` }"></span>
+    </span>
   </section>
 </template>
 
 <script setup>
-import ProjectCard from "../components/ProjectCard.vue";
-import designPortfolioImg from "@/assets/image.png";
-import elearningLandingPageImg from "@/assets/image.png";
-import todoWebAppImg from "@/assets/image.png";
-import entertainmentWebAppImg from "@/assets/image.png";
-import memoryGameImg from "@/assets/image.png";
-import artGalleryShowcaseImg from "@/assets/image.png";
+import { computed, ref } from "vue";
+import ProjectCard from "@/components/ProjectCard.vue";
+import { HORIZONTAL_WORK, gsap, useMotion } from "@/composables/useMotion";
+import { projects } from "@/data/portfolio";
+
+const root = ref(null);
+const track = ref(null);
+const barProgress = ref(0);
+
+const pad = (value) => String(value).padStart(2, "0");
+const totalNumber = pad(projects.length);
+const currentNumber = computed(() =>
+  pad(Math.min(Math.floor(barProgress.value * projects.length) + 1, projects.length))
+);
+
+useMotion(root, (mm) => {
+  mm.add(HORIZONTAL_WORK, () => {
+    const distance = () => track.value.scrollWidth - window.innerWidth;
+
+    const horizontal = gsap.to(track.value, {
+      x: () => -distance(),
+      ease: "none",
+      scrollTrigger: {
+        trigger: root.value,
+        start: "top top",
+        end: () => `+=${distance()}`,
+        pin: true,
+        scrub: 0.6,
+        invalidateOnRefresh: true,
+        onUpdate: (self) => {
+          barProgress.value = self.progress;
+        },
+      },
+    });
+
+    gsap.utils.toArray("[data-project-preview]", track.value).forEach((preview) => {
+      gsap.fromTo(
+        preview.querySelectorAll("img"),
+        { scale: 0.94 },
+        {
+          scale: 1,
+          ease: "none",
+          scrollTrigger: {
+            trigger: preview,
+            containerAnimation: horizontal,
+            start: "left right",
+            end: "left 55%",
+            scrub: true,
+          },
+        }
+      );
+    });
+
+    return () => {
+      barProgress.value = 0;
+    };
+  });
+});
 </script>
 
 <style scoped>
-@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&display=swap");
-
 .projects {
-  padding: 20px 0 0;
-}
-
-.projects__wrapper {
   display: flex;
   flex-direction: column;
-  gap: 48px;
+  gap: 40px;
+  padding-top: calc(var(--header-height) + 20px);
 }
 
 .projects__header {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  gap: 32px;
-  flex-wrap: wrap;
+  gap: 24px;
 }
 
 .projects__heading {
-  max-width: 640px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.projects__eyebrow {
-  font-size: 13px;
-  letter-spacing: 0.32em;
-  text-transform: uppercase;
-  color: rgba(245, 245, 255, 0.48);
-}
-
-.projects__heading h2 {
-  font-size: clamp(34px, 4vw, 48px);
-  line-height: 1.25;
-}
-
-.projects__cta {
-  align-self: flex-start;
-  padding: 12px 22px;
-  border-radius: 14px;
-  border: 1px solid rgba(127, 90, 240, 0.5);
-  color: var(--color-primary);
-  text-transform: uppercase;
-  font-size: 13px;
-  letter-spacing: 0.12em;
-  transition:
-    transform 0.3s ease,
-    background 0.3s ease,
-    box-shadow 0.3s ease;
-}
-
-.projects__cta:hover {
-  transform: translateY(-4px);
-  background: rgba(127, 90, 240, 0.1);
-  box-shadow: 0 15px 35px rgba(127, 90, 240, 0.22);
-}
-
-.projects__grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 28px;
+  gap: 12px;
 }
 
-@media (max-width: 1100px) {
-  .projects__grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+.projects__counter {
+  display: none;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--color-text-muted);
 }
 
-@media (max-width: 720px) {
-  .projects__grid {
-    grid-template-columns: 1fr;
+.projects__counter b {
+  font-weight: 400;
+  color: var(--color-primary);
+}
+
+.projects__track {
+  display: grid;
+  gap: 56px;
+  padding: 0 var(--gutter);
+}
+
+.projects__bar {
+  display: none;
+}
+
+/* Keep in sync with HORIZONTAL_WORK in useMotion.js */
+@media (min-width: 1024px) and (min-height: 640px) and (prefers-reduced-motion: no-preference) {
+  .projects {
+    height: 100vh;
+    gap: 24px;
+    padding-bottom: 28px;
+    overflow: clip;
   }
 
-  .projects__header {
-    align-items: flex-start;
+  .projects__heading {
+    gap: 6px;
   }
 
-  .projects__cta {
-    align-self: stretch;
-    text-align: center;
+  .projects__heading .section-title {
+    font-size: clamp(32px, 3.6vw, 52px);
+  }
+
+  .projects__counter {
+    display: block;
+  }
+
+  .projects__viewport {
+    flex: 1;
+    min-height: 0;
+  }
+
+  .projects__track {
+    display: flex;
+    gap: 32px;
+    width: max-content;
+    height: 100%;
+    padding: 0 var(--page-edge);
+    will-change: transform;
+  }
+
+  .projects__item {
+    width: min(64vw, 900px);
+    height: 100%;
+  }
+
+  .projects__bar {
+    display: block;
+    height: 1px;
+    margin: 0 var(--page-edge);
+    background: var(--color-line);
+  }
+
+  .projects__bar-fill {
+    display: block;
+    height: 100%;
+    background: var(--color-primary);
+    transform-origin: left;
   }
 }
 </style>
