@@ -6,10 +6,22 @@
         <span>{{ profile.location }} · <time>{{ localTime }}</time></span>
       </div>
 
-      <h1 ref="title" class="hero__title" :aria-label="profile.name">
-        <span class="hero__line" aria-hidden="true">{{ profile.firstName }}</span>
-        <span class="hero__line hero__line--end" aria-hidden="true">{{ profile.lastName }}</span>
-      </h1>
+      <div class="hero__stage">
+        <h1 ref="title" class="hero__title" :aria-label="profile.name">
+          <span class="hero__line hero__line--back" aria-hidden="true">{{ profile.firstName }}</span>
+          <span class="hero__line hero__line--front" aria-hidden="true">{{ profile.lastName }}</span>
+        </h1>
+        <div ref="portrait" class="hero__portrait">
+          <img
+            ref="portraitImage"
+            :src="portraitImg"
+            :alt="`Retrato de ${profile.name}`"
+            width="726"
+            height="1100"
+            fetchpriority="high"
+          />
+        </div>
+      </div>
 
       <div class="hero__bottom">
         <div class="hero__intro" data-hero-fade>
@@ -40,9 +52,12 @@
 import { onBeforeUnmount, onMounted, ref } from "vue";
 import { MOTION_OK, SplitText, gsap, scrollToSection, useMotion } from "@/composables/useMotion";
 import { experiences, profile, projects } from "@/data/portfolio";
+import portraitImg from "@/assets/jose-portrait.webp";
 
 const root = ref(null);
 const title = ref(null);
+const portrait = ref(null);
+const portraitImage = ref(null);
 
 const stats = [
   { label: "Años de experiencia", value: "4+" },
@@ -74,7 +89,25 @@ useMotion(root, (mm) => {
     gsap
       .timeline({ defaults: { ease: "power4.out" } })
       .from(split.chars, { yPercent: 110, duration: 1.1, stagger: 0.035 })
+      .fromTo(
+        portrait.value,
+        { clipPath: "inset(100% -20% -20% -20%)" },
+        { clipPath: "inset(-20% -20% -20% -20%)", duration: 1.4, ease: "power3.inOut" },
+        0.15
+      )
+      .from(portraitImage.value, { scale: 1.12, yPercent: 8, duration: 1.6 }, 0.15)
       .from("[data-hero-fade]", { y: 18, autoAlpha: 0, duration: 0.8, stagger: 0.1 }, "-=0.6");
+
+    gsap.to(portrait.value, {
+      yPercent: -12,
+      ease: "none",
+      scrollTrigger: {
+        trigger: root.value,
+        start: "top top",
+        end: "bottom top",
+        scrub: true,
+      },
+    });
 
     gsap.to(lines, {
       xPercent: (index) => (index === 0 ? -4 : 4),
@@ -88,6 +121,19 @@ useMotion(root, (mm) => {
     });
 
     return () => split.revert();
+  });
+
+  mm.add(`(hover: hover) and ${MOTION_OK}`, () => {
+    const moveX = gsap.quickTo(portraitImage.value, "x", { duration: 0.9, ease: "power3.out" });
+    const moveY = gsap.quickTo(portraitImage.value, "y", { duration: 0.9, ease: "power3.out" });
+
+    const onPointerMove = ({ clientX, clientY }) => {
+      moveX((clientX / window.innerWidth - 0.5) * 18);
+      moveY((clientY / window.innerHeight - 0.5) * 12);
+    };
+
+    root.value.addEventListener("pointermove", onPointerMove);
+    return () => root.value?.removeEventListener("pointermove", onPointerMove);
   });
 });
 </script>
@@ -131,8 +177,68 @@ useMotion(root, (mm) => {
   will-change: transform;
 }
 
-.hero__line--end {
+/* Depth: first name behind the portrait, last name in front of it */
+.hero__stage {
+  position: relative;
+}
+
+.hero__line--back {
+  position: relative;
+  z-index: 1;
+}
+
+.hero__line--front {
+  position: relative;
+  z-index: 3;
   align-self: flex-end;
+}
+
+.hero__portrait {
+  position: absolute;
+  z-index: 2;
+  right: 9%;
+  bottom: -22%;
+  height: 136%;
+  aspect-ratio: 726 / 1100;
+  pointer-events: none;
+}
+
+.hero__portrait::before {
+  content: "";
+  position: absolute;
+  inset: 4% -12% 10%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(198, 241, 53, 0.16), transparent);
+}
+
+.hero__portrait img {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  /* The hand is cut by the photo's right border, so that side fades out too */
+  mask-image:
+    linear-gradient(to bottom, #000 62%, transparent 92%),
+    linear-gradient(to left, transparent 1%, #000 15%);
+  mask-composite: intersect;
+}
+
+@media (max-width: 760px) {
+  .hero__stage {
+    margin-top: 26%;
+  }
+
+  /* No room beside the surname here: the hand enters from the screen edge */
+  .hero__portrait {
+    right: calc(-1 * var(--page-edge) - 12px);
+    bottom: 2%;
+    height: 200%;
+  }
+
+  .hero__portrait img {
+    mask-image: linear-gradient(to bottom, #000 62%, transparent 92%);
+  }
 }
 
 .hero__bottom {
